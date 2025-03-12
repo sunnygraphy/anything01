@@ -19,6 +19,7 @@ class Deck {
 
 let decks = []; // 덱 목록
 let cards = []; // 카드 목록
+let selectedDeck = null;
 
 // 카드 생성 함수
 function createCard() {
@@ -63,6 +64,11 @@ function addCardToList(card) {
     `;
     cardList.appendChild(cardElement);
 }
+//카드 리스트 초기화
+function resetCardList(){
+    const cardList = document.getElementById("card-list");
+    cardList.innerHTML = "";
+}
 
 // 덱 생성 함수
 function createDeck() {
@@ -88,12 +94,29 @@ function addDeckToDropdown(deck) {
     option.text = deck.name;
     deckSelect.add(option);
 }
+//덱 리스트 디자인 초기화
+function resetDeckListDesign(){
+    const deckList = document.getElementById("deck-list");
+    Array.from(deckList.children).forEach(child => {
+        child.classList.remove("select-deck");
+    });
+}
+//덱을 선택한 디자인으로 변경
+function selectDeckDesign(deckId){
+    const deckList = document.getElementById("deck-list");
+    Array.from(deckList.children).forEach(child => {
+        if(child.id === deckId){
+            child.classList.add("select-deck");
+        }
+    });
+}
 
 //덱 리스트 추가
 function addDeckToList(deck) {
     const deckList = document.getElementById("deck-list");
     const deckElement = document.createElement("li");
     deckElement.textContent = deck.name;
+    deckElement.id = deck.id;
     
     // 삭제 버튼 생성
     const deleteButton = document.createElement("button");
@@ -103,6 +126,25 @@ function addDeckToList(deck) {
     
     deckElement.appendChild(deleteButton);
     deckList.appendChild(deckElement);
+
+    // 덱 이름을 클릭했을 때 이벤트 추가
+    deckElement.addEventListener("click", () => {
+        selectedDeck = deck;
+        resetDeckListDesign();
+        selectDeckDesign(deck.id);
+        showCardsInDeck(deck.id);
+    });
+}
+//덱에 카드가 들어있는지 확인
+function showCardsInDeck(deckId) {
+    resetCardList();
+    decks.forEach(deck => {
+        if (deck.id === deckId) {
+            deck.cards.forEach(card => {
+                addCardToList(card);
+            });
+        }
+    });
 }
 
 //카드 덱에 저장
@@ -158,7 +200,21 @@ function loadDecksFromLocalStorage() {
             addDeckToDropdown(deck);
             addDeckToList(deck);
         });
+        showAllCards();
     }
+}
+//모든 카드 보여주기
+function showAllCards(){
+    selectedDeck = null;
+    resetCardList();
+    resetDeckListDesign();
+    decks.forEach(deck => {
+        if(deck.cards.length > 0){
+            deck.cards.forEach(card =>{
+                addCardToList(card);
+            })
+        }
+    });
 }
 
 // 앱 초기화
@@ -170,7 +226,10 @@ function initApp() {
 
     const createDeckButton = document.getElementById("create-deck");
     createDeckButton.addEventListener("click", createDeck);
-    
+
+    const showAllCardsButton = document.getElementById("show-all-cards");
+    showAllCardsButton.addEventListener("click", showAllCards);
+
     loadDecksFromLocalStorage();
 }
 
