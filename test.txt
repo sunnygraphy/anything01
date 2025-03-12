@@ -1,0 +1,44 @@
+body {
+    font-family: sans-serif;
+}
+#app {
+    width: 80%;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+.card{
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 5px;
+}
+#deck-list{
+    list-style: none;
+    padding: 0;
+}
+#deck-list li {
+    background-color: #f0f0f0;
+    padding: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    display: flex; /* 삭제 버튼과 나란히 배치하기 위해 */
+    justify-content: space-between; /* 삭제 버튼을 오른쪽으로 밀기 위해 */
+    align-items: center; /* 세로 중앙 정렬 */
+}
+.delete-deck-button {
+    background-color: #ff6666;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.select-deck{
+    background-color: #ccc;
+}
+#show-all-cards{
+    background-color: #f0f0f0;
+    padding: 5px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+}

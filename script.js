@@ -245,16 +245,15 @@ function startLearning() {
 function showCard(card) {
     const cardFront = document.getElementById("card-front");
     const cardBack = document.getElementById("card-back");
+    const showBackButton = document.getElementById("show-back-button");
 
     cardFront.innerHTML = card.front;
     cardBack.innerHTML = card.back;
     if(card.image){
         cardFront.innerHTML += `<img src="${card.image}" alt="카드 이미지" width="100">`;
     }
-
-    // 카드 초기 상태 설정 (앞면 보이기)
-    cardFront.style.display = "block";
     cardBack.style.display = "none";
+    showBackButton.style.display = "block";
     card.isFlipped = false;
 }
 
@@ -262,14 +261,16 @@ function showCard(card) {
 function flipCard() {
     const cardFront = document.getElementById("card-front");
     const cardBack = document.getElementById("card-back");
+    const showBackButton = document.getElementById("show-back-button");
+
     if(currentCard){
         if (currentCard.isFlipped) {
-            cardFront.style.display = "block";
             cardBack.style.display = "none";
+            showBackButton.style.display = "block";
             currentCard.isFlipped = false;
         } else {
-            cardFront.style.display = "none";
             cardBack.style.display = "block";
+            showBackButton.style.display = "none";
             currentCard.isFlipped = true;
         }
     }
@@ -303,8 +304,8 @@ function endLearning(){
 function initApp() {
     console.log("앱이 시작되었습니다.");
     // 카드 영역 클릭 시 카드 뒤집기
-    const cardContainer = document.getElementById("card-container");
-    cardContainer.addEventListener("click", flipCard);
+    const showBackButton = document.getElementById("show-back-button");
+    showBackButton.addEventListener("click", flipCard);
     // 정답/오답 버튼 이벤트 리스너 추가
     const wrongButton = document.getElementById("wrong-button");
     const correctButton = document.getElementById("correct-button");
