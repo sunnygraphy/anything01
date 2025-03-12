@@ -5,6 +5,7 @@ class Card {
         this.back = back;
         this.image = image;
         this.deckId = deckId;
+        this.isFlipped = false;
     }
 }
 
@@ -20,6 +21,9 @@ class Deck {
 let decks = []; // 덱 목록
 let cards = []; // 카드 목록
 let selectedDeck = null;
+let currentCardIndex = 0; // 현재 학습 중인 카드의 인덱스
+let learningMode = false; // 학습 모드인지 여부
+let currentCard = null; // 현재 보여지는 카드
 
 // 카드 생성 함수
 function createCard() {
@@ -216,10 +220,96 @@ function showAllCards(){
         }
     });
 }
+//학습 시작하기
+function startLearning() {
+    learningMode = true;
+    document.getElementById("card-list").style.display = "none";
+    document.getElementById("learning-area").style.display = "block";
+    document.getElementById("create-card").style.display = "none";
+    document.getElementById("deck-select").style.display = "none";
+    
+    // 학습할 카드 선택 (selectedDeck이 null이면 모든 카드를 대상으로)
+    let learningCards = selectedDeck ? selectedDeck.cards : decks.flatMap(deck => deck.cards);
+
+    if (learningCards.length > 0) {
+        currentCardIndex = 0; // 학습 시작 시 인덱스 초기화
+        currentCard = learningCards[currentCardIndex];
+        showCard(currentCard);
+    } else {
+        alert("학습할 카드가 없습니다.");
+        learningMode = false;
+    }
+}
+
+//카드 보여주기
+function showCard(card) {
+    const cardFront = document.getElementById("card-front");
+    const cardBack = document.getElementById("card-back");
+
+    cardFront.innerHTML = card.front;
+    cardBack.innerHTML = card.back;
+    if(card.image){
+        cardFront.innerHTML += `<img src="${card.image}" alt="카드 이미지" width="100">`;
+    }
+
+    // 카드 초기 상태 설정 (앞면 보이기)
+    cardFront.style.display = "block";
+    cardBack.style.display = "none";
+    card.isFlipped = false;
+}
+
+// 카드 뒤집기
+function flipCard() {
+    const cardFront = document.getElementById("card-front");
+    const cardBack = document.getElementById("card-back");
+    if(currentCard){
+        if (currentCard.isFlipped) {
+            cardFront.style.display = "block";
+            cardBack.style.display = "none";
+            currentCard.isFlipped = false;
+        } else {
+            cardFront.style.display = "none";
+            cardBack.style.display = "block";
+            currentCard.isFlipped = true;
+        }
+    }
+}
+// 정답 오답 확인
+function checkAnswer(isCorrect) {
+    if(currentCard){
+        // 다음 카드로 이동
+        currentCardIndex++;
+        let learningCards = selectedDeck ? selectedDeck.cards : decks.flatMap(deck => deck.cards);
+        if (currentCardIndex < learningCards.length) {
+            currentCard = learningCards[currentCardIndex];
+            showCard(currentCard);
+        } else {
+            alert("학습 완료!");
+            endLearning();
+        }
+    }
+}
+// 학습 종료
+function endLearning(){
+    learningMode = false;
+    document.getElementById("card-list").style.display = "block";
+    document.getElementById("learning-area").style.display = "none";
+    document.getElementById("create-card").style.display = "block";
+    document.getElementById("deck-select").style.display = "block";
+    showAllCards();
+}
 
 // 앱 초기화
 function initApp() {
     console.log("앱이 시작되었습니다.");
+    // 카드 영역 클릭 시 카드 뒤집기
+    const cardContainer = document.getElementById("card-container");
+    cardContainer.addEventListener("click", flipCard);
+    // 정답/오답 버튼 이벤트 리스너 추가
+    const wrongButton = document.getElementById("wrong-button");
+    const correctButton = document.getElementById("correct-button");
+    wrongButton.addEventListener("click", () => checkAnswer(false));
+    correctButton.addEventListener("click", () => checkAnswer(true));
 
     const createCardButton = document.getElementById("create-card");
     createCardButton.addEventListener("click", createCard);
@@ -229,6 +319,12 @@ function initApp() {
 
     const showAllCardsButton = document.getElementById("show-all-cards");
     showAllCardsButton.addEventListener("click", showAllCards);
+    
+    const startLearningButton = document.getElementById("start-learning");
+    startLearningButton.addEventListener("click", startLearning);
+    
+    const endLearningButton = document.getElementById("end-learning");
+    endLearningButton.addEventListener("click", endLearning);
 
     loadDecksFromLocalStorage();
 }
