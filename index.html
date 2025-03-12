@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>암기 프로그램</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>암기 프로그램</h1>
+    <div id="app">
+        <h2>덱 관리</h2>
+        <input type="text" id="deck-name" placeholder="덱 이름">
+        <button id="create-deck">덱 생성</button>
+        <ul id="deck-list"></ul>
+
+        <h2>카드 생성</h2>
+        <select id="deck-select"></select>
+        <input type="text" id="card-front" placeholder="앞면 (단어)">
+        <input type="text" id="card-back" placeholder="뒷면 (뜻)">
+        <input type="file" id="card-image" accept="image/*">
+        <button id="create-card">카드 생성</button>
+
+        <h2>생성된 카드</h2>
+        <div id="card-list"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
